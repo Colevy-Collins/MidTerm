@@ -12,6 +12,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(session({secret:'my password'}));
 
+// functions to check user Authinication
 function checkIfUserIsSignedIn(req,res,next){
 	console.log(req.session.user);
 	if(req.session.user){
@@ -29,15 +30,9 @@ function checkIfUserIsAdmin(req,res,next){
 		return;
 	}
 }
-
+//get the html page that displays post depending on user level
 app.get('/',function(req,res,next){
 	fs.readFile('public.html',function(err,data){
-		res.send(data.toString());
-	});
-});
-
-app.get('/admin',checkIfUserIsSignedIn,checkIfUserIsAdmin,function(req,res,next){
-	fs.readFile('admin.html',function(err,data){
 		res.send(data.toString());
 	});
 });
@@ -48,15 +43,15 @@ app.get('/private',checkIfUserIsSignedIn,function(req,res,next){
 	});
 });
 
-
-app.get('/artical',function(req,res,next){
-	fs.readFile('artical.html',function(err,data){
+app.get('/admin',checkIfUserIsSignedIn,checkIfUserIsAdmin,function(req,res,next){
+	fs.readFile('admin.html',function(err,data){
 		res.send(data.toString());
 	});
 });
 
-app.get('/admin/artical',function(req,res,next){
-	fs.readFile('articaladmin.html',function(err,data){
+//gets the aretical.html of post depending on user level
+app.get('/artical',function(req,res,next){
+	fs.readFile('artical.html',function(err,data){
 		res.send(data.toString());
 	});
 });
@@ -67,6 +62,13 @@ app.get('/private/artical',function(req,res,next){
 	});
 });
 
+app.get('/admin/artical',function(req,res,next){
+	fs.readFile('articaladmin.html',function(err,data){
+		res.send(data.toString());
+	});
+});
+
+// gets post data on posts for the diffrent user level
 app.get('/API/allposts',function(req,res,next){
 	fs.readFile('data/posts.json',function(err,data){
 		let posts=JSON.parse(data.toString());
@@ -75,14 +77,6 @@ app.get('/API/allposts',function(req,res,next){
 				posts[i]={};
 			}
 		}
-		res.json(posts);
-		
-		return;
-	});
-});
-app.get('/API/admin/allposts',function(req,res,next){
-	fs.readFile('data/posts.json',function(err,data){
-		let posts=JSON.parse(data.toString());
 		res.json(posts);
 		
 		return;
@@ -105,17 +99,16 @@ app.get('/API/private/allposts',function(req,res,next){
 	});
 });
 
-app.get('/API/oneposts',function(req,res,next){
-	console.log(req.query.index);
+app.get('/API/admin/allposts',function(req,res,next){
 	fs.readFile('data/posts.json',function(err,data){
-		let index = req.query.index;
 		let posts=JSON.parse(data.toString());
-	    res.json(posts[index]);
+		res.json(posts);
+		
 		return;
 	});
 });
-
-app.get('/API/admin/oneposts',function(req,res,next){
+// gets the corresponding artical html data for the diffrent user levels
+app.get('/API/oneposts',function(req,res,next){
 	console.log(req.query.index);
 	fs.readFile('data/posts.json',function(err,data){
 		let index = req.query.index;
@@ -135,12 +128,17 @@ app.get('/API/private/oneposts',function(req,res,next){
 	});
 });
 
-app.get('/private/posts',checkIfUserIsSignedIn,function(req,res,next){
-	fs.readFile('private_posts.html',function(err,data){
-		res.send(data.toString());
+app.get('/API/admin/oneposts',function(req,res,next){
+	console.log(req.query.index);
+	fs.readFile('data/posts.json',function(err,data){
+		let index = req.query.index;
+		let posts=JSON.parse(data.toString());
+	    res.json(posts[index]);
+		return;
 	});
 });
 
+//gets the registration form depending on user level 
 app.get('/registration',function(req,res,next){
 	fs.readFile('registration.html',function(err,data){
 		res.send(data.toString());
@@ -153,40 +151,7 @@ app.get('/adminregistration',checkIfUserIsSignedIn,checkIfUserIsAdmin,function(r
 	});
 });
 
-
-app.get('/auth/signin',function(req,res,next){
-	fs.readFile('signin.html',function(err,data){
-		res.send(data.toString());
-	});
-});
-app.get('/auth/signout',function(req,res,next){
-	req.session.user=null;
-	res.send('signed out');
-});
-
-app.post('/auth/API/signin',function(req,res,next){
-	console.log(req.body);
-	fs.readFile('data/users.json',function(err,data){
-		let users=JSON.parse(data.toString());
-		for(let i=0;i<users.length;i++){
-			if(users[i].email==req.body.email){
-				if(bcrypt.compareSync(req.body.password,users[i].password)){
-					req.session.user={
-						ID:i,
-						firstname:users[i].firstname,
-						lastname:users[i].lastname,
-						role:users[i].role					
-					}
-					res.json({'status':1,'message':'authentication is successful'});
-				}
-				return;
-			}	
-		}
-		res.json({status:-1,message:'authentication is unsuccessful'});
-		return;
-	});
-});
-
+// get list of users
 app.get('/API/users',function(req,res,next){
 	fs.readFile('data/users.json',function(err,data){
 		res.json(JSON.parse(data.toString()));
@@ -194,6 +159,7 @@ app.get('/API/users',function(req,res,next){
 	});
 });
 
+// send user data to files depending on user level
 app.post('/API/users',function(req,res,next){
 	fs.readFile('data/users.json',function(err,data){
 		users=JSON.parse(data.toString());
@@ -233,6 +199,45 @@ app.post('/API/admin/users',function(req,res,next){
 	});
 });
 
+//User sign in and sign out 
+app.get('/auth/signin',function(req,res,next){
+	fs.readFile('signin.html',function(err,data){
+		res.send(data.toString());
+	});
+});
+
+app.post('/auth/API/signin',function(req,res,next){
+	console.log(req.body);
+	fs.readFile('data/users.json',function(err,data){
+		let users=JSON.parse(data.toString());
+		for(let i=0;i<users.length;i++){
+			if(users[i].email==req.body.email){
+				if(bcrypt.compareSync(req.body.password,users[i].password)){
+					req.session.user={
+						ID:i,
+						firstname:users[i].firstname,
+						lastname:users[i].lastname,
+						role:users[i].role					
+					}
+					res.json({'status':1,'message':'authentication is successful'});
+				}
+				return;
+			}	
+		}
+		res.json({status:-1,message:'authentication is unsuccessful'});
+		return;
+	});
+});
+
+app.get('/auth/signout',function(req,res,next){
+	req.session.user=null;
+	res.send('signed out');
+});
+
+/////////////////////////////
+//needs atticion//
+///////////////////
+// the following code deals with retriveing and posting material for post creation
 app.get('/API/posts',checkIfUserIsSignedIn,function(req,res,next){
 	if(!fs.existsSync('data/posts.json')){
 		res.json([]);
