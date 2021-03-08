@@ -31,6 +31,7 @@ function checkIfUserIsAdmin(req,res,next){
 }
 
 app.get('/',function(req,res,next){
+	
 	fs.readFile('public.html',function(err,data){
 		res.send(data.toString());
 	});
@@ -48,9 +49,50 @@ app.get('/artical',function(req,res,next){
 	});
 });
 
+app.get('/admin/artical',function(req,res,next){
+	fs.readFile('articaladmin.html',function(err,data){
+		res.send(data.toString());
+	});
+});
+
 app.get('/API/allposts',function(req,res,next){
 	fs.readFile('data/posts.json',function(err,data){
-		res.json(JSON.parse(data.toString()));
+		let posts=JSON.parse(data.toString());
+		for(let i=0;i<posts.length;i++){
+			if(posts[i].status > 0){
+				posts[i]={};
+			}
+		}
+		res.json(posts);
+		
+		return;
+	});
+});
+app.get('/API/admin/allposts',function(req,res,next){
+	fs.readFile('data/posts.json',function(err,data){
+		let posts=JSON.parse(data.toString());
+		res.json(posts);
+		
+		return;
+	});
+});
+
+app.get('/API/oneposts',function(req,res,next){
+	console.log(req.query.index);
+	fs.readFile('data/posts.json',function(err,data){
+		let index = req.query.index;
+		let posts=JSON.parse(data.toString());
+	    res.json(posts[index]);
+		return;
+	});
+});
+
+app.get('/API/admin/oneposts',function(req,res,next){
+	console.log(req.query.index);
+	fs.readFile('data/posts.json',function(err,data){
+		let index = req.query.index;
+		let posts=JSON.parse(data.toString());
+	    res.json(posts[index]);
 		return;
 	});
 });
@@ -127,8 +169,14 @@ app.post('/API/users',function(req,res,next){
 		users=JSON.parse(data.toString());
 		req.body.password=bcrypt.hashSync(req.body.password,10);
 		console.log(users);
+		req.body.role=0;
+		for(let i=0;i<users.length;++i){
+			if(req.body.email == users[i].email){
+				res.json({status:"faild",msg:"user email already in use"});
+				return;
+			}
+		};
 		users.push(req.body);
-		// Verify if user is in database
 		//console.log(users);
 		fs.writeFile('data/users.json',JSON.stringify(users),function(err,data){
 			res.json(users);
