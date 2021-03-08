@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+
+    <title>Registration</title>
+	
+	</head>
+	<body>
+
+		<h1>Create user</h1>
+		<form id="create-user">
+			First name:<br />
+			<input class="form-control" name="firstname" /><br /><br />
+			Last name:<br />
+			<input class="form-control" name="lastname" /><br /><br />
+			Email:<br />
+			<input class="form-control" name="email" /><br /><br />
+			Password:<br />
+			<input class="form-control" name="password" type="password" /><br /><br />
+			Role:<br />
+			<input class="form-control" name="role" value="0" /><br /><br />
+			<button type="submit" class="btn btn-primary">Submit</button>
+		</form>
+		<script src="jquery-3.5.1.min.js"></script>
+		<script>
+			
+			$(document).on('submit','#create-user',function(e){
+				e.preventDefault();
+				var f=$(this);
+				let formData=Object.fromEntries(new FormData(f[0]));
+				console.log(formData);
+				$.ajax({
+					type:'POST',
+					url:'API/users',
+					contentType:'application/json',
+					data:JSON.stringify(formData),
+					success:function(output,status,requestData){
+						console.log(output);
+					},
+				});
+				return;
+			});
+		</script>
+	</body>
+</html>
