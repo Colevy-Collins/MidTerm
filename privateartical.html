@@ -3,7 +3,7 @@
   <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" conternt="width=device-width, initial-scale=1">
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
@@ -29,7 +29,7 @@
 
     <!-- Option 1: Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
-	<script src="jquery-3.5.1.min.js"></script>
+	<script src="../jquery-3.5.1.min.js"></script>
 
     <!-- Option 2: Separate Popper and Bootstrap JS -->
     <!--
@@ -37,21 +37,25 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.min.js" integrity="sha384-nsg8ua9HAw1y0W1btsyWgBklPnCUAFLuTMS2G72MMONqmOymq585AcH49TLBQObG" crossorigin="anonymous"></script>
     -->
 	
-	<h1 id="title">title</h1>
+	<h1 id="title">title</h1> <button type="submit" class="btn btn-primary">Edit</a></button>
 		<h2 class="inline" id="author">author</h2>
 		<h3 class="inline" id="date"><em>date</em></h3>
 		<h3><a href="/">Back to feed</a><h3>
 		<h4 id="tags">tags</h4>
 		<img id="image" src=""  width="300"/>
-		<p id="content">text</p>	
+		<p id="conternt">text</p>	
 		
 		<script>
+		    $(document).on("click",".btn-primary",function(){
+				window.location.href="/private/edit/posts?index="+findGetParameter("index");
+			});
+		
 			$.getJSON('/API/private/oneposts?index='+findGetParameter("index"),function(data){
 				$('#title').text(data.title);
 				$('#author').text(data.author);
 				$('#date').text(data.date);
 				$('#tags').text(data.tags);
-				$('#content').text(data.content);
+				$('#conternt').text(data.conternt);
 				$('#image').attr('src',data.image);
 			});
 			function findGetParameter(parameterName){

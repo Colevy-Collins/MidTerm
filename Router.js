@@ -13,6 +13,8 @@ app.use(bodyParser.urlencoded({extended:false}));
 app.use(session({secret:'my password'}));
 
 // functions to check user Authinication
+
+// this function checks if user is loged in
 function checkIfUserIsSignedIn(req,res,next){
 	console.log(req.session.user);
 	if(req.session.user){
@@ -23,6 +25,7 @@ function checkIfUserIsSignedIn(req,res,next){
 	}
 }
 
+// this fuction checks if user is an admin
 function checkIfUserIsAdmin(req,res,next){
 	if(req.session.user.role==1) next();
 	else{
@@ -31,37 +34,59 @@ function checkIfUserIsAdmin(req,res,next){
 	}
 }
 //get the html page that displays post depending on user level
+
+// this retives the public html file 
 app.get('/',function(req,res,next){
 	fs.readFile('public.html',function(err,data){
 		res.send(data.toString());
 	});
 });
 
+// this retives the private html file 
 app.get('/private',checkIfUserIsSignedIn,function(req,res,next){
 	fs.readFile('private.html',function(err,data){
 		res.send(data.toString());
 	});
 });
 
+// this retives the admin html file 
 app.get('/admin',checkIfUserIsSignedIn,checkIfUserIsAdmin,function(req,res,next){
 	fs.readFile('admin.html',function(err,data){
 		res.send(data.toString());
 	});
 });
 
+//this retives the private post html file
+app.get('/private/posts',checkIfUserIsSignedIn,function(req,res,next){
+	fs.readFile('private_posts.html',function(err,data){
+		res.send(data.toString());
+	});
+});
+
+//this retives the private edit post html file
+app.get('/private/edit/posts',checkIfUserIsSignedIn,function(req,res,next){
+	fs.readFile('private_post_edit.html',function(err,data){
+		res.send(data.toString());
+	});
+});
+
 //gets the aretical.html of post depending on user level
+
+// this retives the public artical html file 
 app.get('/artical',function(req,res,next){
 	fs.readFile('artical.html',function(err,data){
 		res.send(data.toString());
 	});
 });
 
+// this retives the private artical html file 
 app.get('/private/artical',function(req,res,next){
-	fs.readFile('priavateartical.html',function(err,data){
+	fs.readFile('privateartical.html',function(err,data){
 		res.send(data.toString());
 	});
 });
 
+// this retives the admin artical html file 
 app.get('/admin/artical',function(req,res,next){
 	fs.readFile('articaladmin.html',function(err,data){
 		res.send(data.toString());
@@ -69,6 +94,8 @@ app.get('/admin/artical',function(req,res,next){
 });
 
 // gets post data on posts for the diffrent user level
+
+// this retives the post data for the public html file 
 app.get('/API/allposts',function(req,res,next){
 	fs.readFile('data/posts.json',function(err,data){
 		let posts=JSON.parse(data.toString());
@@ -83,14 +110,19 @@ app.get('/API/allposts',function(req,res,next){
 	});
 });
 
-app.get('/API/private/allposts',function(req,res,next){
+// this retives the post data for the private html file 
+app.get('/API/private/allposts',checkIfUserIsSignedIn,function(req,res,next){
 	fs.readFile('data/posts.json',function(err,data){
+		let users =JSON.parse(fs.readFileSync('data/users.json'));
+		console.log(users);
 		let posts=JSON.parse(data.toString());
-		console.log(req.body.ID);
+		console.log(req.session.user.ID);
 		for(let i=0;i<posts.length;i++){
 			console.log(posts[i].ID);
-			if(posts[i].ID != 6){
+			if(req.session.user.ID != posts[i].authorID){
 				posts[i]={};
+			}else{
+				posts[i].author = users[req.session.user.ID].firstname;
 			}
 		}
 		res.json(posts);
@@ -99,6 +131,7 @@ app.get('/API/private/allposts',function(req,res,next){
 	});
 });
 
+// this retives the post data for the admin html file 
 app.get('/API/admin/allposts',function(req,res,next){
 	fs.readFile('data/posts.json',function(err,data){
 		let posts=JSON.parse(data.toString());
@@ -107,7 +140,10 @@ app.get('/API/admin/allposts',function(req,res,next){
 		return;
 	});
 });
+
 // gets the corresponding artical html data for the diffrent user levels
+
+// this retives the post data for the public artical html file 
 app.get('/API/oneposts',function(req,res,next){
 	console.log(req.query.index);
 	fs.readFile('data/posts.json',function(err,data){
@@ -118,16 +154,21 @@ app.get('/API/oneposts',function(req,res,next){
 	});
 });
 
+// this retives the post data for the private artical html file 
 app.get('/API/private/oneposts',function(req,res,next){
 	console.log(req.query.index);
+	let users =JSON.parse(fs.readFileSync('data/users.json'));
 	fs.readFile('data/posts.json',function(err,data){
 		let index = req.query.index;
 		let posts=JSON.parse(data.toString());
-	    res.json(posts[index]);
+		let post=posts[index]
+		post.author = users[req.session.user.ID].firstname;
+	    res.json(post);
 		return;
 	});
 });
 
+// this retives the post data for the admin artical html file 
 app.get('/API/admin/oneposts',function(req,res,next){
 	console.log(req.query.index);
 	fs.readFile('data/posts.json',function(err,data){
@@ -138,20 +179,34 @@ app.get('/API/admin/oneposts',function(req,res,next){
 	});
 });
 
+// this retives the post data for the private edit html file 
+app.get('/API/private/edit/oneposts',function(req,res,next){
+	console.log(req.query.index);
+	fs.readFile('data/posts.json',function(err,data){
+		let index = req.query.index;
+		let posts=JSON.parse(data.toString());
+	    res.json(posts[index]);
+		return;
+	});
+});
+
 //gets the registration form depending on user level 
+
+// this retives the registration html file 
 app.get('/registration',function(req,res,next){
 	fs.readFile('registration.html',function(err,data){
 		res.send(data.toString());
 	});
 });
 
+// this retives the admin registration html file 
 app.get('/adminregistration',checkIfUserIsSignedIn,checkIfUserIsAdmin,function(req,res,next){
 	fs.readFile('adminregistration.html',function(err,data){
 		res.send(data.toString());
 	});
 });
 
-// get list of users
+// this retives a list of users
 app.get('/API/users',function(req,res,next){
 	fs.readFile('data/users.json',function(err,data){
 		res.json(JSON.parse(data.toString()));
@@ -159,7 +214,7 @@ app.get('/API/users',function(req,res,next){
 	});
 });
 
-// send user data to files depending on user level
+// this sends user data to ther users file from registration html file
 app.post('/API/users',function(req,res,next){
 	fs.readFile('data/users.json',function(err,data){
 		users=JSON.parse(data.toString());
@@ -180,6 +235,7 @@ app.post('/API/users',function(req,res,next){
 	});
 });
 
+// this sends user data to ther users file from admin registration html file
 app.post('/API/admin/users',function(req,res,next){
 	fs.readFile('data/users.json',function(err,data){
 		users=JSON.parse(data.toString());
@@ -200,12 +256,14 @@ app.post('/API/admin/users',function(req,res,next){
 });
 
 //User sign in and sign out 
+// this retrives the sigin html file 
 app.get('/auth/signin',function(req,res,next){
 	fs.readFile('signin.html',function(err,data){
 		res.send(data.toString());
 	});
 });
 
+// this check signs in the users to there account
 app.post('/auth/API/signin',function(req,res,next){
 	console.log(req.body);
 	fs.readFile('data/users.json',function(err,data){
@@ -262,14 +320,26 @@ app.get('/API/posts',checkIfUserIsSignedIn,function(req,res,next){
 	});
 });
 
-app.post('/API/posts',checkIfUserIsSignedIn,function(req,res,next){
+app.put('/API/privat/edit/posts',checkIfUserIsSignedIn,function(req,res,next){
 	var posts=[];
 	if(fs.existsSync('data/posts.json')) posts=JSON.parse(fs.readFileSync('data/posts.json'));
 	req.body.authorID=req.session.user.ID
-	posts.push(req.body);
+	posts[req.query.index]=req.body;
 	fs.writeFile('data/posts.json',JSON.stringify(posts),function(err,data){
 		res.json(posts);
 	});
 });
+
+app.post('/API/posts',checkIfUserIsSignedIn,function(req,res,next){
+	var posts=[];
+	if(fs.existsSync('data/posts.json')) posts=JSON.parse(fs.readFileSync('data/posts.json'));
+	req.body.authorID=req.session.user.ID;
+	posts.push(req.body);
+	console.log(req.body);
+	fs.writeFile('data/posts.json',JSON.stringify(posts),function(err,data){
+		res.json(posts);
+	});
+});
+
 app.listen(port);
 module.exports=app;
