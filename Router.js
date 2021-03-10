@@ -70,6 +70,13 @@ app.get('/private/edit/posts',checkIfUserIsSignedIn,function(req,res,next){
 	});
 });
 
+//this retives the admin edit html file
+app.get('/admin/edit',checkIfUserIsSignedIn,function(req,res,next){
+	fs.readFile('admin_edit.html',function(err,data){
+		res.send(data.toString());
+	});
+});
+
 //gets the aretical.html of post depending on user level
 
 // this retives the public artical html file 
@@ -321,6 +328,25 @@ app.get('/API/posts',checkIfUserIsSignedIn,function(req,res,next){
 });
 
 app.put('/API/privat/edit/posts',checkIfUserIsSignedIn,function(req,res,next){
+	var posts=[];
+	if(fs.existsSync('data/posts.json')) posts=JSON.parse(fs.readFileSync('data/posts.json'));
+	req.body.authorID=req.session.user.ID
+	posts[req.query.index]=req.body;
+	fs.writeFile('data/posts.json',JSON.stringify(posts),function(err,data){
+		res.json(posts);
+	});
+});
+
+app.delete('/API/private/delete/posts',checkIfUserIsSignedIn,function(req,res,next){
+	var posts=[];
+	if(fs.existsSync('data/posts.json')) posts=JSON.parse(fs.readFileSync('data/posts.json'));
+	posts[req.query.index]=null;
+	fs.writeFile('data/posts.json',JSON.stringify(posts),function(err,data){
+		res.json(posts);
+	});
+});
+
+app.put('/API/admin/edit/posts',checkIfUserIsSignedIn,function(req,res,next){
 	var posts=[];
 	if(fs.existsSync('data/posts.json')) posts=JSON.parse(fs.readFileSync('data/posts.json'));
 	req.body.authorID=req.session.user.ID

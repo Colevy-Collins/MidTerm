@@ -18,6 +18,7 @@
 		Password:<br />
 		<input class="form-control" id="exampleInputEmail1" name="password" type="password" /><br /><br />
 		<button type="submit" class="btn btn-primary">Submit</button>
+		<button type="submit" class="btn btn-secondary">Go to Private Page</button>
 		</form>
 
     <!-- Optional JavaScript; choose one of the two! -->
@@ -47,6 +48,10 @@
 					},
 				});
 				return;
+			});
+			
+						$(document).on("click",".btn-secondary",function(){
+				window.location.href="/private";
 			});
 		</script>
   </body>

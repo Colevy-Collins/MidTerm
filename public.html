@@ -27,6 +27,10 @@
 	<ul id="feed">
 		</ul>
 		<script>
+			$(document).on("click",".btn-primary",function(){
+				window.location.href="/auth/signin";
+			});
+			
 			$.getJSON('/API/allposts',function(data){
 				for(let i=0;i<data.length;i++){
 					if(data[i].status)$('#feed').append('<li><a href="/artical?index='+i+'"><img id="image" src="'+data[i].image+'" class="img-thumbnail" width="100" length="50"/> ,<strong> '+data[i].title+'</strong> , '+data[i].date+' , '+data[i].author+' , Published</a></li>')

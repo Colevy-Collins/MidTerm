@@ -3,7 +3,7 @@
   <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" conternt="width=device-width, initial-scale=1">
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
@@ -40,18 +40,19 @@
 	<h1 id="title">title</h1> <button type="submit" class="btn btn-primary">Edit</a></button>
 		<h2 class="inline" id="author">author</h2>
 		<h3 class="inline" id="date"><em>date</em></h3>
-		<h3><a href="/">Back to feed</a><h3>
+		<h3><a href="/admin">Back to feed</a><h3>
 		<h4 id="tags">tags</h4>
 		<img id="image" src=""  width="300"/>
 		<p id="conternt">text</p>	
 		
 		<script>
-			 $(document).on("click",".btn-primary",function(){
-				window.location.href="/private/edit/posts?index="+findGetParameter("index");
+		    $(document).on("click",".btn-primary",function(){
+				window.location.href="/admin/edit?index="+findGetParameter("index");
 			});
-			
-			$.getJSON('/API/admin/oneposts?index='+findGetParameter("index"),function(data){
+		
+			$.getJSON('/API/private/oneposts?index='+findGetParameter("index"),function(data){
 				$('#title').text(data.title);
+				$('#author').text(data.author);
 				$('#date').text(data.date);
 				$('#tags').text(data.tags);
 				$('#conternt').text(data.conternt);

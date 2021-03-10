@@ -43,7 +43,7 @@
 		<h3><a href="/">Back to feed</a><h3>
 		<h4 id="tags">tags</h4>
 		<img id="image" src=""  width="300"/>
-		<p id="content">text</p>	
+		<p id="conternt">text</p>	
 		
 		<script>
 			$.getJSON('/API/oneposts?index='+findGetParameter("index"),function(data){
@@ -51,7 +51,7 @@
 				$('#author').text(data.author);
 				$('#date').text(data.date);
 				$('#tags').text(data.tags);
-				$('#content').text(data.content);
+				$('#conternt').text(data.conternt);
 				$('#image').attr('src',data.image);
 			});
 			function findGetParameter(parameterName){
