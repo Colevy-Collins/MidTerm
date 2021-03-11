@@ -41,7 +41,8 @@
 					contentType:'application/json',
 					data:JSON.stringify(formData),
 					success:function(output,status,requestData){
-						console.log(output);
+						alert("new person registered")
+						window.location.href="/admin";
 					},
 				});
 				return;

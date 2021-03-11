@@ -71,7 +71,7 @@ app.get('/private/edit/posts',checkIfUserIsSignedIn,function(req,res,next){
 });
 
 //this retives the admin edit html file
-app.get('/admin/edit',checkIfUserIsSignedIn,function(req,res,next){
+app.get('/admin/edit',checkIfUserIsSignedIn,checkIfUserIsAdmin,function(req,res,next){
 	fs.readFile('admin_edit.html',function(err,data){
 		res.send(data.toString());
 	});
@@ -94,7 +94,7 @@ app.get('/private/artical',function(req,res,next){
 });
 
 // this retives the admin artical html file 
-app.get('/admin/artical',function(req,res,next){
+app.get('/admin/artical',checkIfUserIsSignedIn,checkIfUserIsAdmin,function(req,res,next){
 	fs.readFile('articaladmin.html',function(err,data){
 		res.send(data.toString());
 	});
@@ -139,7 +139,7 @@ app.get('/API/private/allposts',checkIfUserIsSignedIn,function(req,res,next){
 });
 
 // this retives the post data for the admin html file 
-app.get('/API/admin/allposts',function(req,res,next){
+app.get('/API/admin/allposts',checkIfUserIsSignedIn,checkIfUserIsAdmin,function(req,res,next){
 	fs.readFile('data/posts.json',function(err,data){
 		let posts=JSON.parse(data.toString());
 		res.json(posts);
@@ -162,7 +162,7 @@ app.get('/API/oneposts',function(req,res,next){
 });
 
 // this retives the post data for the private artical html file 
-app.get('/API/private/oneposts',function(req,res,next){
+app.get('/API/private/oneposts',checkIfUserIsSignedIn,function(req,res,next){
 	console.log(req.query.index);
 	let users =JSON.parse(fs.readFileSync('data/users.json'));
 	fs.readFile('data/posts.json',function(err,data){
@@ -176,7 +176,7 @@ app.get('/API/private/oneposts',function(req,res,next){
 });
 
 // this retives the post data for the admin artical html file 
-app.get('/API/admin/oneposts',function(req,res,next){
+app.get('/API/admin/oneposts',checkIfUserIsSignedIn,checkIfUserIsAdmin,function(req,res,next){
 	console.log(req.query.index);
 	fs.readFile('data/posts.json',function(err,data){
 		let index = req.query.index;
@@ -187,7 +187,7 @@ app.get('/API/admin/oneposts',function(req,res,next){
 });
 
 // this retives the post data for the private edit html file 
-app.get('/API/private/edit/oneposts',function(req,res,next){
+app.get('/API/private/edit/oneposts',checkIfUserIsSignedIn,function(req,res,next){
 	console.log(req.query.index);
 	fs.readFile('data/posts.json',function(err,data){
 		let index = req.query.index;
@@ -243,7 +243,7 @@ app.post('/API/users',function(req,res,next){
 });
 
 // this sends user data to ther users file from admin registration html file
-app.post('/API/admin/users',function(req,res,next){
+app.post('/API/admin/users',checkIfUserIsSignedIn,checkIfUserIsAdmin,function(req,res,next){
 	fs.readFile('data/users.json',function(err,data){
 		users=JSON.parse(data.toString());
 		req.body.password=bcrypt.hashSync(req.body.password,10);
@@ -268,6 +268,12 @@ app.get('/auth/signin',function(req,res,next){
 	fs.readFile('signin.html',function(err,data){
 		res.send(data.toString());
 	});
+});
+
+// sign a user out
+app.get('/auth/signout',function(req,res,next){
+	req.session.user=null;
+	res.send('signed out');
 });
 
 // this check signs in the users to there account
@@ -324,7 +330,7 @@ app.delete('/API/private/delete/posts',checkIfUserIsSignedIn,function(req,res,ne
 	});
 });
 
-app.delete('/API/admin/delete/posts',checkIfUserIsSignedIn,function(req,res,next){
+app.delete('/API/admin/delete/posts',checkIfUserIsSignedIn,checkIfUserIsAdmin,function(req,res,next){
 	var posts=[];
 	if(fs.existsSync('data/posts.json')) posts=JSON.parse(fs.readFileSync('data/posts.json'));
 	posts[req.query.index]={};
@@ -334,7 +340,7 @@ app.delete('/API/admin/delete/posts',checkIfUserIsSignedIn,function(req,res,next
 	});
 });
 
-app.put('/API/admin/edit/posts',checkIfUserIsSignedIn,function(req,res,next){
+app.put('/API/admin/edit/posts',checkIfUserIsSignedIn,checkIfUserIsAdmin,function(req,res,next){
 	var posts=[];
 	if(fs.existsSync('data/posts.json')) posts=JSON.parse(fs.readFileSync('data/posts.json'));
 	req.body.authorID=req.session.user.ID
