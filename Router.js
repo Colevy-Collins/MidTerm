@@ -294,39 +294,6 @@ app.post('/auth/API/signin',function(req,res,next){
 	});
 });
 
-app.get('/auth/signout',function(req,res,next){
-	req.session.user=null;
-	res.send('signed out');
-});
-
-/////////////////////////////
-//needs atticion//
-///////////////////
-// the following code deals with retriveing and posting material for post creation
-app.get('/API/posts',checkIfUserIsSignedIn,function(req,res,next){
-	if(!fs.existsSync('data/posts.json')){
-		res.json([]);
-		return;
-	}
-	var users=JSON.parse(fs.readFileSync('data/users.json'));
-	fs.readFile('data/posts.json',function(err,data){
-		var all_posts=JSON.parse(data.toString());
-		for(let i=0;i<all_posts.length;i++){
-			all_posts[i].author=users[all_posts[i].authorID].firstname+' '+users[all_posts[i].authorID].lastname;
-		}
-		
-		if(req.session.user.role==1) res.json(all_posts);
-		else{
-			let filtered_posts=[];
-			for(let i=0;i<all_posts.length;i++){
-				if(all_posts[i].authorID==req.session.user.ID) filtered_posts.push(all_posts[i]);
-			}
-			res.json(filtered_posts);
-		}
-		return;
-	});
-});
-
 app.put('/API/privat/edit/posts',checkIfUserIsSignedIn,function(req,res,next){
 	var posts=[];
 	if(fs.existsSync('data/posts.json')) posts=JSON.parse(fs.readFileSync('data/posts.json'));
@@ -340,7 +307,28 @@ app.put('/API/privat/edit/posts',checkIfUserIsSignedIn,function(req,res,next){
 app.delete('/API/private/delete/posts',checkIfUserIsSignedIn,function(req,res,next){
 	var posts=[];
 	if(fs.existsSync('data/posts.json')) posts=JSON.parse(fs.readFileSync('data/posts.json'));
-	posts[req.query.index]=null;
+	posts[req.query.index]={};
+	posts[req.query.index].author= -1;
+	fs.writeFile('data/posts.json',JSON.stringify(posts),function(err,data){
+		res.json(posts);
+	});
+});
+
+app.delete('/API/private/delete/posts',checkIfUserIsSignedIn,function(req,res,next){
+	var posts=[];
+	if(fs.existsSync('data/posts.json')) posts=JSON.parse(fs.readFileSync('data/posts.json'));
+	posts[req.query.index]={};
+	posts[req.query.index].author= -1;
+	fs.writeFile('data/posts.json',JSON.stringify(posts),function(err,data){
+		res.json(posts);
+	});
+});
+
+app.delete('/API/admin/delete/posts',checkIfUserIsSignedIn,function(req,res,next){
+	var posts=[];
+	if(fs.existsSync('data/posts.json')) posts=JSON.parse(fs.readFileSync('data/posts.json'));
+	posts[req.query.index]={};
+	posts[req.query.index].author= -1;
 	fs.writeFile('data/posts.json',JSON.stringify(posts),function(err,data){
 		res.json(posts);
 	});

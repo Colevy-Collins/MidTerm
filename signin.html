@@ -18,7 +18,6 @@
 		Password:<br />
 		<input class="form-control" id="exampleInputEmail1" name="password" type="password" /><br /><br />
 		<button type="submit" class="btn btn-primary">Submit</button>
-		<button type="submit" class="btn btn-secondary">Go to Private Page</button>
 		</form>
 
     <!-- Optional JavaScript; choose one of the two! -->
@@ -44,14 +43,11 @@
 					contentType:'application/json',
 					data:JSON.stringify(formData),
 					success:function(output,status,requestData){
-						console.log(output);
+						alert("You are logged In");
+						window.location.href="/private";
 					},
 				});
 				return;
-			});
-			
-						$(document).on("click",".btn-secondary",function(){
-				window.location.href="/private";
 			});
 		</script>
   </body>

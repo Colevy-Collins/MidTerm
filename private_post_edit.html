@@ -26,7 +26,7 @@
 			<input class="form-control" name="status" id="status" /><br /><br />
 			<button type="submit" class="btn btn-primary">Submit</button>
 			
-			<button type="submit" class="btn btn-danger">Delete</button>
+			<button class="btn btn-danger">Delete</button>
 			
 		</form>
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
@@ -37,9 +37,9 @@
 					type:'DELETE',
 					url:'/API/private/delete/posts?index='+findGetParameter("index"),
 					contentType:'application/json',
-					data:JSON.stringify(formData),
 					success:function(output,status,requestData){
-						console.log(output);
+						alert("Post Deleted");
+						window.location.href="/private";
 					},
 				});
 				});
@@ -53,7 +53,7 @@
 				$('#status').val(data.status);
 			});
 			
-			$(document).on('submit','#edit-post',function(e){
+			$(document).on("click",".btn-danger",function(e){
 				e.preventDefault();
 				var f=$(this);
 				let formData=Object.fromEntries(new FormData(f[0]));
@@ -64,7 +64,8 @@
 					contentType:'application/json',
 					data:JSON.stringify(formData),
 					success:function(output,status,requestData){
-						console.log(output);
+						alert("Post Edited");
+						window.location.href="/private";
 					},
 				});
 				return;
