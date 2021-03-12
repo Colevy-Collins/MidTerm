@@ -187,6 +187,20 @@ app.get('/API/private/oneposts',checkIfUserIsSignedIn,function(req,res,next){
 // this retives the post data for the admin artical html file 
 app.get('/API/admin/oneposts',checkIfUserIsSignedIn,checkIfUserIsAdmin,function(req,res,next){
 	console.log(req.query.index);
+	let users =JSON.parse(fs.readFileSync('data/users.json'));
+	fs.readFile('data/posts.json',function(err,data){
+		let index = req.query.index;
+		let posts=JSON.parse(data.toString());
+		let post=posts[index]
+		post.author = users[req.session.user.ID].firstname;
+	    res.json(post);
+		return;
+	});
+});
+
+// this retives the post data for the private edit html file 
+app.get('/API/private/edit/oneposts',checkIfUserIsSignedIn,function(req,res,next){
+	console.log(req.query.index);
 	fs.readFile('data/posts.json',function(err,data){
 		let index = req.query.index;
 		let posts=JSON.parse(data.toString());
@@ -196,7 +210,7 @@ app.get('/API/admin/oneposts',checkIfUserIsSignedIn,checkIfUserIsAdmin,function(
 });
 
 // this retives the post data for the private edit html file 
-app.get('/API/private/edit/oneposts',checkIfUserIsSignedIn,function(req,res,next){
+app.get('/API/admin/edit/oneposts',checkIfUserIsSignedIn,checkIfUserIsAdmin,function(req,res,next){
 	console.log(req.query.index);
 	fs.readFile('data/posts.json',function(err,data){
 		let index = req.query.index;
@@ -319,11 +333,11 @@ app.put('/API/privat/edit/posts',checkIfUserIsSignedIn,function(req,res,next){
 	});
 });
 
-app.delete('/API/private/delete/posts',checkIfUserIsSignedIn,function(req,res,next){
+app.put('/API/admin/edit/posts',checkIfUserIsSignedIn,function(req,res,next){
 	var posts=[];
 	if(fs.existsSync('data/posts.json')) posts=JSON.parse(fs.readFileSync('data/posts.json'));
-	posts[req.query.index]={};
-	posts[req.query.index].author= -1;
+	req.body.authorID=req.session.user.ID
+	posts[req.query.index]=req.body;
 	fs.writeFile('data/posts.json',JSON.stringify(posts),function(err,data){
 		res.json(posts);
 	});
@@ -345,16 +359,6 @@ app.delete('/API/admin/delete/posts',checkIfUserIsSignedIn,checkIfUserIsAdmin,fu
 	posts[req.query.index]={};
 	posts[req.query.index].author= -1;
 	posts[req.query.index].status= -1;
-	fs.writeFile('data/posts.json',JSON.stringify(posts),function(err,data){
-		res.json(posts);
-	});
-});
-
-app.put('/API/admin/edit/posts',checkIfUserIsSignedIn,checkIfUserIsAdmin,function(req,res,next){
-	var posts=[];
-	if(fs.existsSync('data/posts.json')) posts=JSON.parse(fs.readFileSync('data/posts.json'));
-	req.body.authorID=req.session.user.ID
-	posts[req.query.index]=req.body;
 	fs.writeFile('data/posts.json',JSON.stringify(posts),function(err,data){
 		res.json(posts);
 	});

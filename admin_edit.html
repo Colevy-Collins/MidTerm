@@ -36,16 +36,16 @@
 		    $(document).on("click",".btn-danger",function(){
 				$.ajax({
 					type:'DELETE',
-					url:'/API/private/delete/posts?index='+findGetParameter("index"),
+					url:'/API/admin/delete/posts?index='+findGetParameter("index"),
 					contentType:'application/json',
 					success:function(output,status,requestData){
 						alert("Post Deleted");
-						window.location.href="/private";
+						window.location.href="/admin";
 					},
 				});
 				});
 				
-			$.getJSON('/API/admin/delete/posts?index='+findGetParameter("index"),function(data){
+			$.getJSON('/API/admin/edit/oneposts?index='+findGetParameter("index"),function(data){
 				$('#title').val(data.title);
 				$('#date').val(data.date);
 				$('#tags').val(data.tags);
@@ -61,7 +61,7 @@
 				console.log(formData);
 				$.ajax({
 					type:'PUT',
-					url:'/API/privat/edit/posts?index='+findGetParameter("index"),
+					url:'/API/admin/edit/posts?index='+findGetParameter("index"),
 					contentType:'application/json',
 					data:JSON.stringify(formData),
 					success:function(output,status,requestData){

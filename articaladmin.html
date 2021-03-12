@@ -50,7 +50,7 @@
 				window.location.href="/admin/edit?index="+findGetParameter("index");
 			});
 		
-			$.getJSON('/API/private/oneposts?index='+findGetParameter("index"),function(data){
+			$.getJSON('/API/admin/oneposts?index='+findGetParameter("index"),function(data){
 				$('#title').text(data.title);
 				$('#author').text(data.author);
 				$('#date').text(data.date);
