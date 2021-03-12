@@ -40,7 +40,7 @@
 						statusString = "Non-Published";
 					}
 					
-					$('#feed').append('<li><a href="/admin/artical?index='+i+'"><img id="image" src="'+data[i].image+'" class="img-thumbnail" width="100" length="50"/> ,<strong> '+data[i].title+'</strong> , '+data[i].date+' , '+data[i].author+' , '+statusString+'</a></li>')
+					if(data[i].status)$('#feed').append('<li><a href="/admin/artical?index='+i+'"><img id="image" src="'+data[i].image+'" class="img-thumbnail" width="100" length="50"/> ,<strong> '+data[i].title+'</strong> , '+data[i].date+' , '+data[i].author+' , '+statusString+'</a></li>')
 					
 				}
 			});

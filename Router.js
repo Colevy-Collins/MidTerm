@@ -104,13 +104,17 @@ app.get('/admin/artical',checkIfUserIsSignedIn,checkIfUserIsAdmin,function(req,r
 
 // this retives the post data for the public html file 
 app.get('/API/allposts',function(req,res,next){
+	let users =JSON.parse(fs.readFileSync('data/users.json'));
 	fs.readFile('data/posts.json',function(err,data){
 		let posts=JSON.parse(data.toString());
 		for(let i=0;i<posts.length;i++){
-			if(posts[i].status > 0){
+			if(posts[i].status != 0){
 				posts[i]={};
+			}else{
+				posts[i].author = users[posts[i].authorID].firstname;
 			}
 		}
+		console.log(posts);
 		res.json(posts);
 		
 		return;
@@ -142,6 +146,11 @@ app.get('/API/private/allposts',checkIfUserIsSignedIn,function(req,res,next){
 app.get('/API/admin/allposts',checkIfUserIsSignedIn,checkIfUserIsAdmin,function(req,res,next){
 	fs.readFile('data/posts.json',function(err,data){
 		let posts=JSON.parse(data.toString());
+		for(let i=0;i<posts.length;i++){
+			if(posts[i].status < 0){
+				posts[i]={};
+			}
+		}
 		res.json(posts);
 		
 		return;
@@ -335,6 +344,7 @@ app.delete('/API/admin/delete/posts',checkIfUserIsSignedIn,checkIfUserIsAdmin,fu
 	if(fs.existsSync('data/posts.json')) posts=JSON.parse(fs.readFileSync('data/posts.json'));
 	posts[req.query.index]={};
 	posts[req.query.index].author= -1;
+	posts[req.query.index].status= -1;
 	fs.writeFile('data/posts.json',JSON.stringify(posts),function(err,data){
 		res.json(posts);
 	});
