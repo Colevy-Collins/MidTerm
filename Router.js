@@ -323,6 +323,9 @@ app.post('/auth/API/signin',function(req,res,next){
 	});
 });
 
+//editting posts
+
+//posts edited post to the database from a private user
 app.put('/API/privat/edit/posts',checkIfUserIsSignedIn,function(req,res,next){
 	var posts=[];
 	if(fs.existsSync('data/posts.json')) posts=JSON.parse(fs.readFileSync('data/posts.json'));
@@ -333,6 +336,7 @@ app.put('/API/privat/edit/posts',checkIfUserIsSignedIn,function(req,res,next){
 	});
 });
 
+//posts edited post to the database from a admin user
 app.put('/API/admin/edit/posts',checkIfUserIsSignedIn,function(req,res,next){
 	var posts=[];
 	if(fs.existsSync('data/posts.json')) posts=JSON.parse(fs.readFileSync('data/posts.json'));
@@ -343,6 +347,9 @@ app.put('/API/admin/edit/posts',checkIfUserIsSignedIn,function(req,res,next){
 	});
 });
 
+//deleting posts
+
+//deleting post from the database from a private user
 app.delete('/API/private/delete/posts',checkIfUserIsSignedIn,function(req,res,next){
 	var posts=[];
 	if(fs.existsSync('data/posts.json')) posts=JSON.parse(fs.readFileSync('data/posts.json'));
@@ -353,6 +360,7 @@ app.delete('/API/private/delete/posts',checkIfUserIsSignedIn,function(req,res,ne
 	});
 });
 
+//deleting post from the database from a admin user
 app.delete('/API/admin/delete/posts',checkIfUserIsSignedIn,checkIfUserIsAdmin,function(req,res,next){
 	var posts=[];
 	if(fs.existsSync('data/posts.json')) posts=JSON.parse(fs.readFileSync('data/posts.json'));
@@ -364,6 +372,9 @@ app.delete('/API/admin/delete/posts',checkIfUserIsSignedIn,checkIfUserIsAdmin,fu
 	});
 });
 
+// creating posts
+
+//posts new post to the database
 app.post('/API/posts',checkIfUserIsSignedIn,function(req,res,next){
 	var posts=[];
 	if(fs.existsSync('data/posts.json')) posts=JSON.parse(fs.readFileSync('data/posts.json'));
